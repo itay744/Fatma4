@@ -1,12 +1,12 @@
 import java.util.Vector;
 
-class BoundedBuffer<T> {
+class BoundedBuffer<T> extends UnboundedBuffer<T> {
 
 	private Vector<T> buffer;
 	private int maxSize;
 
 	public BoundedBuffer(int maxSize) {
-		buffer = new Vector<T>();
+		super();
 		this.maxSize = maxSize;
 	}
 
@@ -23,17 +23,6 @@ class BoundedBuffer<T> {
 		notifyAll();
 	}
 
-	public synchronized T extract() {
-		while (buffer.isEmpty())
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		T item = buffer.elementAt(0);
-		buffer.remove(item);
-		notifyAll();
-		return item;
-	}
+	
+	
 }
