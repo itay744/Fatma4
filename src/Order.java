@@ -1,18 +1,18 @@
 
 public class Order {
-	private long serialNum;
+	private int serialNum;
 	private int numOfPizzas;
-	private String adress;
-	public long creditCard;
+	private String address;
+	public long creditCardNum;
 	private double price;
 	private String orderTimeArrival;
 
-	public Order(long serialNum, int numOfPizzas, String adress, long creditCard, double price,
+	public Order(int serialNum, int numOfPizzas, String address, long creditCard, double price,
 			String orderTimeArrival) {
 		this.serialNum = serialNum;
 		this.numOfPizzas = numOfPizzas;
-		this.adress = adress;
-		this.creditCard = creditCard;
+		this.address = address;
+		this.creditCardNum = creditCard;
 		this.price = price;
 		this.orderTimeArrival = orderTimeArrival;
 	}
