@@ -24,4 +24,11 @@ public class UnboundedBuffer<T> {
 		buffer.remove(t);
 		return t;
 	}
+	
+	public boolean isEmpty() {
+		if(buffer.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
 }
