@@ -1,33 +1,36 @@
 
 public class Order {
-	private int serialNum;
 	private int numOfPizzas;
 	private String address;
 	public long creditCardNum;
 	private double price;
 	private int arrivalTime;
 	private double distance;
+	private static int countedSerial;
+	private int serialNum;
 
 	
-	public Order(int serialNum, int numOfPizzas, String address, long creditCard, double price,int arrivalTime) {
-		this.serialNum = serialNum;
+	public Order(int numOfPizzas, String address, long creditCard,int arrivalTime, double price) {
 		this.numOfPizzas = numOfPizzas;
 		this.address = address;
 		this.creditCardNum = creditCard;
-		this.price = price;
+		this.price = 0;
 		this.arrivalTime = arrivalTime;
+		countedSerial++;
+		serialNum = countedSerial;
+		
 	}
 
 	public int getSerialNum() {
-		return serialNum;
-	}
-
-	public void setSerialNum(int serialNum) {
-		this.serialNum = serialNum;
+		return countedSerial;
 	}
 	
-	public void setDistance(int distance) {
+	public void setDistance(double distance) {
 		this.distance = distance;
+	}
+	
+	public double getDistance() {
+		return distance;
 	}
 
 	public int getNumOfPizzas() {

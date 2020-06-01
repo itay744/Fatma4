@@ -5,6 +5,7 @@ public class Clerk extends Thread {
 	private static int pizzaPrice=25;
 	UnboundedBuffer<Call> callLine;
 	UnboundedBuffer<Order> orders;
+	UnboundedBuffer<Call> managerLine;
 
 	public Clerk(String name, UnboundedBuffer<Call> callLine) {
 		this.name = name;
@@ -15,7 +16,7 @@ public class Clerk extends Thread {
 		Call c = callLine.extract();
 		salary+=2;
 		try {
-			Thread.sleep((c.getCallDuration() * 1000));
+			Thread.sleep((long) (c.getCallDuration() * 1000));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -23,7 +24,12 @@ public class Clerk extends Thread {
 		if (c.getNumOfPizzas() < 10) {
 			Order o = createOrder(c);
 			orders.insert(o);
-			notifyAll();
+			try {
+				join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} 
 		else  {
 			try {
@@ -33,22 +39,18 @@ public class Clerk extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			managerLine.insert(c);	
 		}
 
 	}
 	
-	private void addCallPayment() {
-		this.salary += 2;
-	}
-
 	private Order createOrder(Call c) {
 		int numOfPizzas = c.getNumOfPizzas();
 		double totalPrice = pizzaPrice * numOfPizzas;
-		int serial = Call.serialNum;
 		String address = c.getAddress();
 		long creditCard = c.getCreditCardNum();
 		int arrivalTime = c.getArrivalTime();
-		Order o = new Order(serial, numOfPizzas,address ,creditCard, totalPrice,arrivalTime);
+		Order o = new Order(numOfPizzas,address,creditCard,arrivalTime,totalPrice);
 
 		return o;
 	}

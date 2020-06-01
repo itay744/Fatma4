@@ -3,16 +3,33 @@ public class Scheduler extends Thread {
 	private String name;
 	private double salary;
 	UnboundedBuffer<Order> orders;
+	UnboundedBuffer<Order> system;
 
-	public Scheduler(String name, UnboundedBuffer<Order> orders) {
+	public Scheduler(String name, UnboundedBuffer<Order> orders,UnboundedBuffer<Order> system) {
 		super();
 		this.name = name;
 		this.salary = 0;
 		this.orders = orders;
+		this.system = system;
 	}
 
 	public void run() {
 		Order o = orders.extract();
+		double distance = convertAddress(o);
+		o.setDistance(distance);
+		double workingTime = calculateWorkingTime(distance);
+		addOrderToSalary(workingTime);
+		try {
+			sleep((long) workingTime);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		system.insert(o);
+		System.out.println("New Order Arrived ");
+		
+		
+		
 	}
 
 	private double calculateWorkingTime(double distance) {

@@ -8,18 +8,18 @@ public class Call extends Thread {
 	private String address;
 	private long creditCardNum;
 	private int arrivalTime;
-	private long callDuration;
+	private double callDuration;
 	private UnboundedBuffer<Call> callLine;
-	public static int serialNum;
 	
-	public Call (int pizzas,String address,long creditNum,int arrivalTime,long callDuration,UnboundedBuffer<Call> callLine) {
+	
+	public Call (long creditNum,int pizzas,int arrivalTime,double callDuration,String address,UnboundedBuffer<Call> callLine) {
 		this.numOfPizzas = pizzas;
 		this.address = address;
 		this.creditCardNum = creditNum;
 		this.arrivalTime = arrivalTime;
 		this.callDuration = callDuration;
 		this.callLine = callLine;
-		Call.serialNum++;
+		
 	}
 	
 	public void run() {
@@ -45,7 +45,7 @@ public class Call extends Thread {
 		return creditCardNum;
 	}
 
-	public long getCallDuration() {
+	public double getCallDuration() {
 		return callDuration;
 	}
 	
