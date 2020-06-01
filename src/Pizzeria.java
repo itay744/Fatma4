@@ -1,11 +1,12 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Vector;
 
 public class Pizzeria {
-	private Clerk clerk1;
-	private Clerk clerk2;
-	private Clerk clerk3;
+	public static Clerk clerk1;
+	private static Clerk clerk2;
+	private static Clerk clerk3;
 	private InformationSystem system;
 	private PizzaGuy pizzaGuy1;
 	private PizzaGuy pizzaGuy2;
@@ -15,31 +16,59 @@ public class Pizzeria {
 	private Manager manager;
 	private Scheduler scheduler1;
 	private Scheduler scheduler2;
-	private UnboundedBuffer<Call> callsLine;
+	public static UnboundedBuffer<Call> callsLine;
 	private UnboundedBuffer<Call> managerLine;
 	private UnboundedBuffer<Order> orders;
 	private BoundedBuffer<PizzaDelivery> delivery;
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
+	public Pizzeria(String file) {
+		callsLine = new UnboundedBuffer<Call>();
+		managerLine = new UnboundedBuffer<Call>();
+		orders = new UnboundedBuffer<Order>();
+		delivery = new BoundedBuffer<PizzaDelivery>();	
+		
+		Clerk clerk1 = new Clerk("yuli",callsLine);
+		Clerk clerk2 = new Clerk("itai",callsLine);
+		Clerk clerk3 = new Clerk("gili",callsLine);
+		
+		readCalls(file);
+		
+		
 	}
 	
-	private void readCalls(String file) { // reads from the Customers file.
+	public static void main(String [] args)
+    {
+        String CallsFile = new String ("C:\\Users\\yulig\\Desktop\\Fatma4\\data\\assignment4_callsData.txt");
+        Pizzeria pizzaPazza = new Pizzeria(CallsFile);
+        System.out.println("yuli");
+        System.out.println(Pizzeria.callsLine.extract().toString());
+ 
+       // pizzaPazza.printCalls(callsLine);
+    }
+	
+	public void readCalls(String file) { // reads from the Customers file.
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(file));// create new buffer reader and file reader
 			String line;
 			line = br.readLine();// reading lines from file
+			Vector<Thread>threads = new Vector<Thread>();
 			while ((line = br.readLine()) != null) {// runs until line is null
 				String temp[] = line.split("\\t");// splitting string by tab
-				 long creditCardNum = Long.parseLong(temp[0]);
-				 int numOfPizzas = Integer.parseInt(temp[1]);
-				 int arrivalTime = Integer.parseInt(temp[2]);
-				 double callDuration = Double.parseDouble(temp[3]);
-				 String address = new String(temp[4]);
+				int creditCardNum = Integer.parseInt(temp[0]);
+				int numOfPizzas = Integer.parseInt(temp[1]);
+				int arrivalTime = Integer.parseInt(temp[2]);
+				double callDuration = Double.parseDouble(temp[3]);
+				String address = new String(temp[4]);
 				Call c = new Call(creditCardNum,numOfPizzas,arrivalTime,callDuration,address, callsLine);
+				Thread t = new Thread(c);
+				threads.add(t);
 			}
+			startThreads(threads);
+			Clerk(clerk1);
+			Clerk(clerk2);
+			Clerk(clerk3);
 
 		} catch (IOException e) {// catching io exception
 			e.printStackTrace();
@@ -52,5 +81,24 @@ public class Pizzeria {
 			}
 		}
 	}
+	
+	public void startThreads(Vector<Thread>threads) {
+		for(Thread t: threads){
+			t.start();
+		}
+	}
+	
+	public void printCalls(UnboundedBuffer<Call> call) {
+		for(int i = 0; i<150; i++) {
+			System.out.println(call.extract().toString());
+		}
+	}
+	
+	public static void Clerk(Clerk c) {
+		Thread t = new Thread(c);
+		t.start();
+	}
+	
+	
 
 }
