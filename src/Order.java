@@ -1,5 +1,5 @@
 
-public class Order {
+public class Order  {
 	private int numOfPizzas;
 	private String address;
 	public long creditCardNum;

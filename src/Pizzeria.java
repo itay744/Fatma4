@@ -28,9 +28,12 @@ public class Pizzeria {
 		orders = new UnboundedBuffer<Order>();
 		delivery = new BoundedBuffer<PizzaDelivery>();	
 		readCalls(file);
-		Clerk clerk1 = new Clerk("yuli",callsLine);
-		Clerk clerk2 = new Clerk("itai",callsLine);
-		Clerk clerk3 = new Clerk("gili",callsLine);
+		Clerk clerk1 = new Clerk("yuli",callsLine,orders,managerLine);
+		Clerk clerk2 = new Clerk("itai",callsLine,orders,managerLine);
+		Clerk clerk3 = new Clerk("gili",callsLine,orders,managerLine);
+		Clerk(clerk1);
+		Clerk(clerk2);
+		Clerk(clerk3);
 		
 		
 		
@@ -66,9 +69,7 @@ public class Pizzeria {
 				threads.add(t);
 			}
 			startThreads(threads);
-			Clerk(clerk1);
-			Clerk(clerk2);
-			Clerk(clerk3);
+			
 
 		} catch (IOException e) {// catching io exception
 			e.printStackTrace();
@@ -95,7 +96,7 @@ public class Pizzeria {
 	}
 	
 	public static void Clerk(Clerk c) {
-		Thread t = new Thread(c);
+		Thread t = new Thread(c);	
 		t.start();
 	}
 	

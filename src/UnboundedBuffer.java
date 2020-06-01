@@ -26,10 +26,4 @@ public class UnboundedBuffer<T> {
 		return t;
 	}
 
-	public boolean isEmpty() {
-		if (buffer.isEmpty()) {
-			return false;
-		}
-		return true;
-	}
 }

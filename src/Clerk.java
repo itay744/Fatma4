@@ -1,5 +1,5 @@
 
-public class Clerk extends Thread {
+public class Clerk implements Runnable {
 	private String name;
 	private double salary;
 	private static int pizzaPrice=25;
@@ -7,15 +7,15 @@ public class Clerk extends Thread {
 	UnboundedBuffer<Order> orders;
 	UnboundedBuffer<Call> managerLine;
 
-	public Clerk(String name, UnboundedBuffer<Call> callLine) {
+	public Clerk(String name, UnboundedBuffer<Call> callLine,UnboundedBuffer<Order> orders,UnboundedBuffer<Call> managerLine) {
 		this.name = name;
 		this.callLine = callLine;
+		this.orders = orders;
+		this.managerLine = managerLine;
 	}
 
-	public  void run() {
+	public synchronized void run() {
 		Call c = callLine.extract();
-		System.out.println("yuli");
-		System.out.println(c);
 		salary+=2;
 		try {
 			Thread.sleep((long) (c.getCallDuration() * 1000));
@@ -26,8 +26,9 @@ public class Clerk extends Thread {
 		if (c.getNumOfPizzas() < 10) {
 			Order o = createOrder(c);
 			orders.insert(o);
+			Thread t = new Thread(this);
 			try {
-				join();
+				t.join();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -35,7 +36,7 @@ public class Clerk extends Thread {
 		} 
 		else  {
 			try {
-				sleep(500);// need to transfer to manager call line
+				Thread.sleep(500);// need to transfer to manager call line
 				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

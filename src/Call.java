@@ -3,7 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
-public class Call extends Thread {
+public class Call implements Runnable {
 	private int numOfPizzas;
 	private String address;
 	private long creditCardNum;
