@@ -52,5 +52,10 @@ public class Call extends Thread {
 	public int getArrivalTime() {
 		return arrivalTime;
 	}
+	
+	public String toString()
+    {//todo check if needed
+        return this.creditCardNum + " " + this.numOfPizzas + " " + this.arrivalTime + " " + this.callDuration + " "+ this.address;
+    }
 
 }

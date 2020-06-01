@@ -3,9 +3,9 @@ public class Scheduler extends Thread {
 	private String name;
 	private double salary;
 	UnboundedBuffer<Order> orders;
-	UnboundedBuffer<Order> system;
+	InformationSystem system;
 
-	public Scheduler(String name, UnboundedBuffer<Order> orders,UnboundedBuffer<Order> system) {
+	public Scheduler(String name, UnboundedBuffer<Order> orders, InformationSystem system) {
 		super();
 		this.name = name;
 		this.salary = 0;
@@ -20,16 +20,14 @@ public class Scheduler extends Thread {
 		double workingTime = calculateWorkingTime(distance);
 		addOrderToSalary(workingTime);
 		try {
-			sleep((long) workingTime);
+			sleep((long) workingTime*1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		system.insert(o);
-		System.out.println("New Order Arrived ");
-		
-		
-		
+		system.insertOrder(o);
+		System.out.println("New Order Arrived "+ o.getSerialNum());
+
 	}
 
 	private double calculateWorkingTime(double distance) {

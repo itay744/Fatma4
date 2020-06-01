@@ -27,19 +27,19 @@ public class Pizzeria {
 		managerLine = new UnboundedBuffer<Call>();
 		orders = new UnboundedBuffer<Order>();
 		delivery = new BoundedBuffer<PizzaDelivery>();	
-		
+		readCalls(file);
 		Clerk clerk1 = new Clerk("yuli",callsLine);
 		Clerk clerk2 = new Clerk("itai",callsLine);
 		Clerk clerk3 = new Clerk("gili",callsLine);
 		
-		readCalls(file);
+		
 		
 		
 	}
 	
 	public static void main(String [] args)
     {
-        String CallsFile = new String ("C:\\Users\\yulig\\Desktop\\Fatma4\\data\\assignment4_callsData.txt");
+        String CallsFile = new String ("assignment4_callsData.txt");
         Pizzeria pizzaPazza = new Pizzeria(CallsFile);
         System.out.println("yuli");
         System.out.println(Pizzeria.callsLine.extract().toString());
@@ -98,6 +98,7 @@ public class Pizzeria {
 		Thread t = new Thread(c);
 		t.start();
 	}
+	
 	
 	
 

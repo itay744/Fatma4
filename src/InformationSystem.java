@@ -19,11 +19,11 @@ public class InformationSystem extends Thread {
 		farD.add(o);
 		dataBase.add(o);
 		}
-		if(o.getDistance() <3) {
+		if(o.getDistance() <=3) {
 			shortD.add(o);
 			dataBase.add(o);
 		}
-		if(o.getDistance()<8 && o.getDistance()>3) {
+		if(o.getDistance()<=8 && o.getDistance()>3) {
 			meduimD.add(o);
 			dataBase.add(o);
 		}

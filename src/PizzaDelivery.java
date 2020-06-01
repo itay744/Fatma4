@@ -1,4 +1,3 @@
-import java.util.Vector;
 
 public class PizzaDelivery {
 	private String address;
@@ -9,5 +8,13 @@ public class PizzaDelivery {
 		this.address = address;
 		this.distance = distance;
 		this.pizzasInDelivery = pizzasInDelivery;
+	}
+	
+	public double getDistance() {
+		return this.distance;
+	}
+	
+	public double getPizzasInDelivery() {
+		return this.pizzasInDelivery;
 	}
 }
