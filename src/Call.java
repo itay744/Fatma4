@@ -1,4 +1,7 @@
-
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Vector;
 
 public class Call extends Thread {
 	private int numOfPizzas;
@@ -7,7 +10,7 @@ public class Call extends Thread {
 	private int arrivalTime;
 	private long callDuration;
 	private UnboundedBuffer<Call> callLine;
-	public static int siryalNum;
+	public static int serialNum;
 	
 	public Call (int pizzas,String address,long creditNum,int arrivalTime,long callDuration,UnboundedBuffer<Call> callLine) {
 		this.numOfPizzas = pizzas;
@@ -16,7 +19,7 @@ public class Call extends Thread {
 		this.arrivalTime = arrivalTime;
 		this.callDuration = callDuration;
 		this.callLine = callLine;
-		Call.siryalNum++;
+		Call.serialNum++;
 	}
 	
 	public void run() {

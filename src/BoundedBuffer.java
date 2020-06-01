@@ -3,11 +3,11 @@ import java.util.Vector;
 class BoundedBuffer<T> extends UnboundedBuffer<T> {
 
 	private Vector<T> buffer;
-	private int maxSize;
+	private int maxSize ;
 
-	public BoundedBuffer(int maxSize) {
+	public BoundedBuffer() {
 		super();
-		this.maxSize = maxSize;
+		this.maxSize =12;
 	}
 
 	public synchronized void insert(T item) {

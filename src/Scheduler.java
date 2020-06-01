@@ -1,47 +1,64 @@
 
-public class Scheduler extends Thread{
+public class Scheduler extends Thread {
 	private String name;
 	private double salary;
-	UnboundedBuffer<Call> calls = new UnboundedBuffer<Call>();
+	UnboundedBuffer<Order> orders;
 
-
-	public Scheduler(String name, UnboundedBuffer<Call> calls) {
+	public Scheduler(String name, UnboundedBuffer<Order> orders) {
 		super();
 		this.name = name;
-		this.calls = calls;
 		this.salary = 0;
+		this.orders = orders;
 	}
 
-	@Override
 	public void run() {
-		Call temp = calls.extract();
-		try {
-			Thread.sleep((temp.getCallDuration()*1000));
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if(temp.getNumOfPizzas() < 10) {
-			Order newOrder = newOrder(temp);
-		}
-		else
-		{
-			
-		}
-		
-		
+		Order o = orders.extract();
 	}
-	
-	
-	private Order newOrder(Call temp) {	
-		int numOfPizzas = temp.getNumOfPizzas();
-		double totalPrice = 25*numOfPizzas;
-		Order newOrder = new Order(Call.siryalNum,numOfPizzas,temp.getAddress(),
-				temp.getCreditCardNum(),totalPrice,temp.getArrivalTime());
-		return newOrder;
+
+	private double calculateWorkingTime(double distance) {
+		return distance * 0.25;
 	}
-	
-	
-	
-	
+
+	private void addOrderToSalary(double workingTime) {
+		salary += workingTime * 4;
+	}
+
+	private double convertAddress(Order o) {
+		String address = o.getAddress();
+		double distance = calculateDistance(address);
+		return distance;
+
+	}
+
+	private double calculateDistance(String s) {
+		int distance = countWordsUsingSplit(s);
+		char c = s.charAt(0);
+		distance += addDistanceByFirstLetter(c);
+		return distance;
+	}
+
+	private double addDistanceByFirstLetter(char c) {
+		if (c >= 'a' || c <= 'h') {
+			return 0.5;
+		}
+		if (c >= 'i' || c <= 'p') {
+			return 2;
+		}
+		if (c >= 'q' || c <= 'z') {
+			return 7;
+		}
+		if (c >= '0' || c <= '9') {
+			return c - '0';
+		}
+		return 0;
+	}
+
+	public static int countWordsUsingSplit(String input) {
+		if (input == null || input.isEmpty()) {
+			return 0;
+		}
+		String[] words = input.split("\\s+");
+		return words.length;
+	}
+
 }
