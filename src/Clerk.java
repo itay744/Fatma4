@@ -1,4 +1,5 @@
 
+public class Clerk
 public class Clerk implements Runnable {
 	private String name;
 	private double salary;
@@ -16,6 +17,7 @@ public class Clerk implements Runnable {
 
 	public synchronized void run() {
 		Call c = callLine.extract();
+		Thread t = new Thread(c);
 		salary+=2;
 		try {
 			Thread.sleep((long) (c.getCallDuration() * 1000));
@@ -26,7 +28,7 @@ public class Clerk implements Runnable {
 		if (c.getNumOfPizzas() < 10) {
 			Order o = createOrder(c);
 			orders.insert(o);
-			Thread t = new Thread(this);
+			
 			try {
 				t.join();
 			} catch (InterruptedException e) {
