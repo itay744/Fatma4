@@ -5,21 +5,21 @@ import java.util.Vector;
 
 public class Pizzeria {
 	public static Clerk clerk1;
-	private static Clerk clerk2;
-	private static Clerk clerk3;
-	private InformationSystem system;
-	private PizzaGuy pizzaGuy1;
-	private PizzaGuy pizzaGuy2;
-	private PizzaGuy pizzaGuy3;
-	private PizzaDelivery pizzaDelivery1;
-	private PizzaDelivery pizzaDelivery2;
-	private Manager manager;
-	private Scheduler scheduler1;
-	private Scheduler scheduler2;
+	public static Clerk clerk2;
+	public static Clerk clerk3;
+	public static InformationSystem system;
+	public static PizzaGuy pizzaGuy1;
+	public static PizzaGuy pizzaGuy2;
+	public static PizzaGuy pizzaGuy3;
+	public static PizzaDelivery pizzaDelivery1;
+	public static PizzaDelivery pizzaDelivery2;
+	public static Manager manager;
+	public static Scheduler scheduler1;
+	public static Scheduler scheduler2;
 	public static UnboundedBuffer<Call> callsLine;
-	private UnboundedBuffer<Call> managerLine;
-	private UnboundedBuffer<Order> orders;
-	private BoundedBuffer<PizzaDelivery> delivery;
+	public static UnboundedBuffer<Call> managerLine;
+	public static UnboundedBuffer<Order> orders;
+	public static BoundedBuffer<PizzaDelivery> delivery;
 	
 
 	public Pizzeria(String file) {
@@ -34,11 +34,17 @@ public class Pizzeria {
 		Clerk(clerk1);
 		Clerk(clerk2);
 		Clerk(clerk3);
-		
-		
-		
+		system = new InformationSystem();
+		scheduler1 = new Scheduler("Roi",orders,system);
+		scheduler2 = new Scheduler("Sofia",orders,system);
+		pizzaGuy1 = new PizzaGuy("Guy",delivery);
+		pizzaGuy2 = new PizzaGuy("Jon",delivery);
+		pizzaGuy3 = new PizzaGuy("Juli",delivery);
+		manager = new Manager("Gabi",managerLine,orders,system);	
 		
 	}
+	
+	
 	
 	public static void main(String [] args)
     {
@@ -71,7 +77,7 @@ public class Pizzeria {
 			startThreads(threads);
 			
 
-		} catch (IOException e) {// catching io exception
+		} catch (IOException e) {// catching io exception3
 			e.printStackTrace();
 		} finally {
 			try {
