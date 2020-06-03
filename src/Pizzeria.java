@@ -4,18 +4,12 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class Pizzeria {
-	public static Clerk clerk1;
-	public static Clerk clerk2;
-	public static Clerk clerk3;
+        public static Clerk clerk1,clerk2,clerk3;
 	public static InformationSystem system;
-	public static PizzaGuy pizzaGuy1;
-	public static PizzaGuy pizzaGuy2;
-	public static PizzaGuy pizzaGuy3;
-	public static PizzaDelivery pizzaDelivery1;
-	public static PizzaDelivery pizzaDelivery2;
+	public static PizzaGuy pizzaGuy1,pizzaGuy2,pizzaGuy3;
+	public static PizzaDelivery pizzaDelivery1,pizzaDelivery2;
 	public static Manager manager;
-	public static Scheduler scheduler1;
-	public static Scheduler scheduler2;
+	public static Scheduler scheduler1,scheduler2;
 	public static UnboundedBuffer<Call> callsLine;
 	public static UnboundedBuffer<Call> managerLine;
 	public static UnboundedBuffer<Order> orders;
