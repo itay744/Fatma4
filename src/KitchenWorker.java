@@ -3,9 +3,9 @@ public class KitchenWorker extends Thread{
 	private String name;
 	private double salary;
 	InformationSystem system;
-	BoundedBuffer<PizzaDelivery> deliveries;
+	BoundedQueue<PizzaDelivery> deliveries;
 
-	public KitchenWorker(String name,InformationSystem system,BoundedBuffer<PizzaDelivery> deliveries) {
+	public KitchenWorker(String name,InformationSystem system,BoundedQueue<PizzaDelivery> deliveries) {
 		this.name = name;
 		this.system = system;
 		this.deliveries = deliveries;
@@ -32,5 +32,6 @@ public class KitchenWorker extends Thread{
 	
 	private void addOrderToSalary(Order o) {
 		this.salary+= o.getNumOfPizzas()*2;
+		Pizzeria.addSalaryToExpenses(o.getNumOfPizzas()*2);
 	}
 }

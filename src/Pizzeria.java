@@ -4,59 +4,86 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class Pizzeria {
-        public static Clerk clerk1,clerk2,clerk3;
+	public static Vector<Clerk> clerks;
 	public static InformationSystem system;
-	public static PizzaGuy pizzaGuy1,pizzaGuy2,pizzaGuy3;
-	public static PizzaDelivery pizzaDelivery1,pizzaDelivery2;
+	public static Vector<PizzaGuy> pizzaGuys;
+	public static Vector<PizzaDelivery> pizzaDeliverys;
+	public static Vector<Scheduler> schedulers;
 	public static Manager manager;
-	public static Scheduler scheduler1,scheduler2;
-	public static UnboundedBuffer<Call> callsLine;
-	public static UnboundedBuffer<Call> managerLine;
-	public static UnboundedBuffer<Order> orders;
-	public static BoundedBuffer<PizzaDelivery> delivery;
-	
+	public static Queue<Call> callsLine;
+	public static Queue<Call> managerLine;
+	public static Queue<Order> orders;
+	public static BoundedQueue<PizzaDelivery> deliverys;
+	public static boolean dayIsOver = false;
+	public static boolean callsIsEmpty = false;
+	public static boolean ordersIsEmpty = false;
+	private static double dailyExpenses;
+	private static double dailyIncome;
 
 	public Pizzeria(String file) {
-		callsLine = new UnboundedBuffer<Call>();
-		managerLine = new UnboundedBuffer<Call>();
-		orders = new UnboundedBuffer<Order>();
-		delivery = new BoundedBuffer<PizzaDelivery>();	
-		readCalls(file);
-		Clerk clerk1 = new Clerk("yuli",callsLine,orders,managerLine);
-		Clerk clerk2 = new Clerk("itai",callsLine,orders,managerLine);
-		Clerk clerk3 = new Clerk("gili",callsLine,orders,managerLine);
-		Clerk(clerk1);
-		Clerk(clerk2);
-		Clerk(clerk3);
 		system = new InformationSystem();
-		scheduler1 = new Scheduler("Roi",orders,system);
-		scheduler2 = new Scheduler("Sofia",orders,system);
-		pizzaGuy1 = new PizzaGuy("Guy",delivery);
-		pizzaGuy2 = new PizzaGuy("Jon",delivery);
-		pizzaGuy3 = new PizzaGuy("Juli",delivery);
-		manager = new Manager("Gabi",managerLine,orders,system);	
-		
+		manager = new Manager(managerLine, orders, system);
+		clerks = buildClercks();
+		pizzaGuys = buildPizzaGuy();
+		schedulers = buildSchedulers();
+		callsLine = new Queue<Call>();
+		managerLine = new Queue<Call>();
+		orders = new Queue<Order>();
+		deliverys = new BoundedQueue<PizzaDelivery>();
+		readCalls(file);
+		startClerksDay(clerks);
+		startSchedulersDay(schedulers);
+		startPizzaGuysDay(pizzaGuys);
+		dailyExpenses = 0;
+		dailyIncome = 0;
 	}
-	
-	
-	
-	public static void main(String [] args)
-    {
-        String CallsFile = new String ("assignment4_callsData.txt");
-        Pizzeria pizzaPazza = new Pizzeria(CallsFile);
-        System.out.println("yuli");
-        System.out.println(Pizzeria.callsLine.extract().toString());
- 
-       // pizzaPazza.printCalls(callsLine);
-    }
-	
+
+	public static void addSalaryToExpenses(double salary) {
+		dailyExpenses += salary;
+	}
+
+	public static void addOrderToIncome(double deliveryPrice) {
+		dailyIncome += deliveryPrice;
+	}
+
+	private Vector<Clerk> buildClercks() {
+		Vector<Clerk> v = new Vector<Clerk>();
+		Clerk clerk1 = new Clerk("yuli", callsLine, orders, managerLine);
+		Clerk clerk2 = new Clerk("itai", callsLine, orders, managerLine);
+		Clerk clerk3 = new Clerk("gili", callsLine, orders, managerLine);
+		v.add(clerk1);
+		v.add(clerk2);
+		v.add(clerk3);
+		return v;
+	}
+
+	private Vector<Scheduler> buildSchedulers() {
+		Vector<Scheduler> v = new Vector<Scheduler>();
+		Scheduler scheduler1 = new Scheduler("Roi", orders, system);
+		Scheduler scheduler2 = new Scheduler("Sofia", orders, system);
+		v.add(scheduler1);
+		v.add(scheduler2);
+		return v;
+	}
+
+	private Vector<PizzaGuy> buildPizzaGuy() {
+		Vector<PizzaGuy> v = new Vector<PizzaGuy>();
+		PizzaGuy pizzaGuy1 = new PizzaGuy("Guy", deliverys);
+		PizzaGuy pizzaGuy2 = new PizzaGuy("Jon", deliverys);
+		PizzaGuy pizzaGuy3 = new PizzaGuy("Juli", deliverys);
+		v.add(pizzaGuy1);
+		v.add(pizzaGuy2);
+		v.add(pizzaGuy3);
+		return v;
+	}
+
 	public void readCalls(String file) { // reads from the Customers file.
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(file));// create new buffer reader and file reader
 			String line;
 			line = br.readLine();// reading lines from file
-			Vector<Thread>threads = new Vector<Thread>();
+			Vector<Thread> threads = new Vector<Thread>();
 			while ((line = br.readLine()) != null) {// runs until line is null
 				String temp[] = line.split("\\t");// splitting string by tab
 				int creditCardNum = Integer.parseInt(temp[0]);
@@ -64,12 +91,12 @@ public class Pizzeria {
 				int arrivalTime = Integer.parseInt(temp[2]);
 				double callDuration = Double.parseDouble(temp[3]);
 				String address = new String(temp[4]);
-				Call c = new Call(creditCardNum,numOfPizzas,arrivalTime,callDuration,address, callsLine);
+				Call c = new Call(creditCardNum, numOfPizzas, arrivalTime, callDuration, address, callsLine);
+				manager.addCallToManagerList();
 				Thread t = new Thread(c);
 				threads.add(t);
 			}
 			startThreads(threads);
-			
 
 		} catch (IOException e) {// catching io exception3
 			e.printStackTrace();
@@ -82,25 +109,77 @@ public class Pizzeria {
 			}
 		}
 	}
-	
-	public void startThreads(Vector<Thread>threads) {
-		for(Thread t: threads){
+
+	public static double getDailyExpenses() {
+		return dailyExpenses;
+	}
+
+	public static double getDailyIncome() {
+		return dailyIncome;
+	}
+
+	public void startThreads(Vector<Thread> threads) {
+		for (Thread t : threads) {
 			t.start();
 		}
 	}
-	
-	public void printCalls(UnboundedBuffer<Call> call) {
-		for(int i = 0; i<150; i++) {
+
+	public void printCalls(Queue<Call> call) {
+		for (int i = 0; i < 150; i++) {
 			System.out.println(call.extract().toString());
 		}
 	}
-	
-	public static void Clerk(Clerk c) {
-		Thread t = new Thread(c);	
-		t.start();
+
+	public static void startClerksDay(Vector<Clerk> v) {
+		while (!callsIsEmpty) {
+			for (Clerk c : v) {
+				Thread t = new Thread(c);
+				t.start();
+				checkCallsLine();
+			}
+		}
 	}
-	
-	
-	
+
+	private static void checkCallsLine() {
+		if (callsLine.isEmpty()) {
+			callsIsEmpty = true;
+		}
+	}
+
+	public static void startPizzaGuysDay(Vector<PizzaGuy> v) {
+		while (!dayIsOver) {
+			for (PizzaGuy p : v) {
+				Thread t = new Thread(p);
+				t.start();
+			}
+		}
+	}
+
+	public static void startSchedulersDay(Vector<Scheduler> v) {
+		while (!dayIsOver) {
+			for (Scheduler s : v) {
+				Thread t = new Thread(s);
+				t.start();
+			}
+		}
+	}
+
+	public static void startKitchenWorkersDay(Vector<KitchenWorker> v) {
+		while (!dayIsOver) {
+			for (KitchenWorker k : v) {
+				Thread t = new Thread(k);
+				t.start();
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		String CallsFile = new String("assignment4_callsData.txt");
+		Pizzeria pizzaPazza = new Pizzeria(CallsFile);
+		System.out.println("yuli");
+		System.out.println(Pizzeria.callsLine.extract().toString());
+
+		// pizzaPazza.printCalls(callsLine);
+	}
 
 }

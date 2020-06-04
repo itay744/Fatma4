@@ -1,24 +1,25 @@
+import javax.sql.rowset.Joinable;
 
-public class Clerk
 public class Clerk implements Runnable {
 	private String name;
 	private double salary;
-	private static int pizzaPrice=25;
-	UnboundedBuffer<Call> callLine;
-	UnboundedBuffer<Order> orders;
-	UnboundedBuffer<Call> managerLine;
+	private static int pizzaBasePrice=25;
+	Queue<Call> callLine;
+	Queue<Order> orders;
+	Queue<Call> managerLine;
 
-	public Clerk(String name, UnboundedBuffer<Call> callLine,UnboundedBuffer<Order> orders,UnboundedBuffer<Call> managerLine) {
+	public Clerk(String name, Queue<Call> callLine,Queue<Order> orders,Queue<Call> managerLine) {
 		this.name = name;
 		this.callLine = callLine;
 		this.orders = orders;
 		this.managerLine = managerLine;
+		this.salary=0;
 	}
 
 	public synchronized void run() {
 		Call c = callLine.extract();
+		addCallToClerkSalary();
 		Thread t = new Thread(c);
-		salary+=2;
 		try {
 			Thread.sleep((long) (c.getCallDuration() * 1000));
 		} catch (InterruptedException e) {
@@ -27,14 +28,8 @@ public class Clerk implements Runnable {
 		}
 		if (c.getNumOfPizzas() < 10) {
 			Order o = createOrder(c);
+			Pizzeria.addOrderToIncome(o.getPrice());
 			orders.insert(o);
-			
-			try {
-				t.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} 
 		else  {
 			try {
@@ -46,14 +41,16 @@ public class Clerk implements Runnable {
 			}
 			managerLine.insert(c);	
 		}
-		
-		
-
+	}
+	
+	private void addCallToClerkSalary() {
+		this.salary+=2;
+		Pizzeria.addSalaryToExpenses(2);
 	}
 	
 	private Order createOrder(Call c) {
 		int numOfPizzas = c.getNumOfPizzas();
-		double totalPrice = pizzaPrice * numOfPizzas;
+		double totalPrice = pizzaBasePrice * numOfPizzas;
 		String address = c.getAddress();
 		long creditCard = c.getCreditCardNum();
 		int arrivalTime = c.getArrivalTime();

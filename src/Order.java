@@ -14,11 +14,15 @@ public class Order  {
 		this.numOfPizzas = numOfPizzas;
 		this.address = address;
 		this.creditCardNum = creditCard;
-		this.price = 0;
+		this.price = price;
 		this.arrivalTime = arrivalTime;
 		countedSerial++;
 		serialNum = countedSerial;
 		
+	}
+
+	public double getPrice() {
+		return price;
 	}
 
 	public int getSerialNum() {

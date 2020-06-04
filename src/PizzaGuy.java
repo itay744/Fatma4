@@ -5,17 +5,17 @@ public class PizzaGuy extends Thread {
 	private double salary;
 	private int deliveryCapacity;
 	private int totalDeliveries;
-	BoundedBuffer<PizzaDelivery> deliveries;
+	public static boolean onlyOneDeliveryPermited = false;
+	BoundedQueue<PizzaDelivery> deliveries;
 	PizzaDelivery[] delivery;
 
-	public PizzaGuy(String name, BoundedBuffer<PizzaDelivery> deliveries) {
+	public PizzaGuy(String name, BoundedQueue<PizzaDelivery> deliveries) {
 		this.name = name;
 		deliveryCapacity = (int) (Math.random() * 2) + 2;
 		this.salary = 0;
 		this.deliveries = deliveries;
 		delivery = new PizzaDelivery[deliveryCapacity];
 		totalDeliveries=0;
-
 	}
 
 	private int addTip() {
@@ -26,6 +26,7 @@ public class PizzaGuy extends Thread {
 
 	private void addDeliveryToSalary(int numOfDeliveries, double distance, int tips) {
 		salary += 3 * numOfDeliveries + 4 * distance + tips;
+		Pizzeria.addSalaryToExpenses(3 * numOfDeliveries + 4 * distance);
 	}
 	
 	public int getTotalDeliveries() {
@@ -33,14 +34,18 @@ public class PizzaGuy extends Thread {
 	}
 
 	public void run() {
-
+		
+		if(onlyOneDeliveryPermited) {
+			deliveryCapacity = 1;
+		}
+		
 		for (int i = 0; i < deliveryCapacity; i++) {
 			PizzaDelivery d = deliveries.extract();
 			totalDeliveries++;
 			delivery[i] = d;
 
 		}
-		for (int i = 0; i < delivery.length; i++) {
+		for (int i = 0; i < deliveryCapacity; i++) {
 			int currentDriving = (int) delivery[i].getDistance();
 
 			try {
@@ -57,7 +62,12 @@ public class PizzaGuy extends Thread {
 				e.printStackTrace();
 			}
 			addDeliveryToSalary(1, currentDriving, addTip());
+			Pizzeria.manager.addToDeliveredOrder();
+			Pizzeria.manager.checkIfDayIsOver();
+			
 		}
 	}
+	
+	
 
 }

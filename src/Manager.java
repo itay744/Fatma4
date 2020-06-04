@@ -1,13 +1,17 @@
 
 public class Manager extends Thread {
-	UnboundedBuffer<Call> managerLine;
-	UnboundedBuffer<Order> orders;
+	Queue<Call> managerLine;
+	Queue<Order> orders;
 	InformationSystem system;
+	private int callsLeft;
+	private int deliveredOrders;
 
-	public Manager(UnboundedBuffer<Call> managerLine, UnboundedBuffer<Order> orders, InformationSystem system) {
+	public Manager(Queue<Call> managerLine, Queue<Order> orders, InformationSystem system) {
 		this.managerLine = managerLine;
 		this.orders = orders;
 		this.system = system;
+		this.callsLeft = 0;
+		this.deliveredOrders = 0;
 	}
 
 	private Order createOrder(Call c) {
@@ -27,6 +31,7 @@ public class Manager extends Thread {
 	public void run() {
 		Call c = managerLine.extract();
 		Order o = createOrder(c);
+		Pizzeria.addOrderToIncome(o.getPrice());
 		double distance = convertAddress(o);
 		o.setDistance(distance);
 		system.insertOrder(o);
@@ -36,6 +41,37 @@ public class Manager extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void addToDeliveredOrder() {
+		this.deliveredOrders++;
+	}
+
+	public void checkDeliveries() {
+		int deliveriesLeft = callsLeft - deliveredOrders;
+		if (deliveriesLeft <= 10) {
+			PizzaGuy.onlyOneDeliveryPermited = true;
+		}
+	}
+
+	private void printWorkingDayData() {
+		System.out.println(" Orders Delivered " + deliveredOrders);
+		System.out.println("Total Income: " + Pizzeria.getDailyIncome());
+		System.out.println("Total Employees Salary: " + Pizzeria.getDailyExpenses());
+	}
+
+	public void checkIfDayIsOver() {
+		if (deliveredOrders == callsLeft) {
+			stopWorkingDay();
+		}
+	}
+
+	public void addCallToManagerList() {
+		this.callsLeft++;
+	}
+
+	public void removeCallFromList() {
+		this.callsLeft--;
 	}
 
 	private double convertAddress(Order o) {
@@ -74,6 +110,24 @@ public class Manager extends Thread {
 		}
 		String[] words = input.split("\\s+");
 		return words.length;
+	}
+
+	public void stopSchedulersWork() {
+		Pizzeria.dayIsOver = true;
+	}
+
+	public void stopPizzaGuyWork() {
+		Pizzeria.dayIsOver = true;
+	}
+
+	public void stopWorkingDay() {
+		stopPizzaGuyWork();
+		stopSchedulersWork();
+		stopKitchenWorkersWork();
+	}
+
+	public void stopKitchenWorkersWork() {
+		Pizzeria.ordersIsEmpty = true;
 	}
 
 }

@@ -4,29 +4,31 @@ public class InformationSystem extends Thread {
 	private Vector <Order> farD;
 	private Vector <Order> shortD;
 	private Vector <Order> meduimD;
-	private DataBase dataBase;
+	
 	
 
 	public InformationSystem() {
 		farD = new Vector<Order>();
 		meduimD = new Vector<Order>();
 		shortD = new Vector<Order>();
-		dataBase = new DataBase();
+		
 	}
 
 	public synchronized void insertOrder(Order o) {
 		if(o.getDistance()> 8) {
 		farD.add(o);
-		dataBase.add(o);
+		
 		}
 		if(o.getDistance() <=3) {
 			shortD.add(o);
-			dataBase.add(o);
+			
 		}
 		if(o.getDistance()<=8 && o.getDistance()>3) {
 			meduimD.add(o);
-			dataBase.add(o);
+			
 		}
+		System.out.println("New Order Arriverd:");
+		System.out.println("Serial numner: "+ o.getSerialNum());
 		this.notifyAll();
 	}
 

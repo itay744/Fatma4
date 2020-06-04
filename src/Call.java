@@ -9,10 +9,10 @@ public class Call implements Runnable {
 	private long creditCardNum;
 	private int arrivalTime;
 	private double callDuration;
-	private UnboundedBuffer<Call> callLine;
+	private Queue<Call> callLine;
 	
 	
-	public Call (long creditNum,int pizzas,int arrivalTime,double callDuration,String address,UnboundedBuffer<Call> callLine) {
+	public Call (long creditNum,int pizzas,int arrivalTime,double callDuration,String address,Queue<Call> callLine) {
 		this.numOfPizzas = pizzas;
 		this.address = address;
 		this.creditCardNum = creditNum;

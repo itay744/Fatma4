@@ -2,10 +2,10 @@
 public class Scheduler extends Thread {
 	private String name;
 	private double salary;
-	UnboundedBuffer<Order> orders;
+	Queue<Order> orders;
 	InformationSystem system;
 
-	public Scheduler(String name, UnboundedBuffer<Order> orders, InformationSystem system) {
+	public Scheduler(String name, Queue<Order> orders, InformationSystem system) {
 		super();
 		this.name = name;
 		this.salary = 0;
@@ -20,13 +20,13 @@ public class Scheduler extends Thread {
 		double workingTime = calculateWorkingTime(distance);
 		addOrderToSalary(workingTime);
 		try {
-			sleep((long) workingTime*1000);
+			sleep((long) workingTime * 1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		system.insertOrder(o);
-		System.out.println("New Order Arrived "+ o.getSerialNum());
+		System.out.println("New Order Arrived " + o.getSerialNum());
 
 	}
 
@@ -36,6 +36,7 @@ public class Scheduler extends Thread {
 
 	private void addOrderToSalary(double workingTime) {
 		salary += workingTime * 4;
+		Pizzeria.addSalaryToExpenses(workingTime * 4);
 	}
 
 	private double convertAddress(Order o) {
