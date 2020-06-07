@@ -1,16 +1,16 @@
 
 public class Manager extends Thread {
-	Queue<Call> managerLine;
-	Queue<Order> orders;
-	InformationSystem system;
-	private int callsLeft;
+	private Queue<Call> managerLine;
+	private Queue<Order> orders;
+	private InformationSystem system;
+	private int callsForTheDay;
 	private int deliveredOrders;
 
 	public Manager(Queue<Call> managerLine, Queue<Order> orders, InformationSystem system) {
 		this.managerLine = managerLine;
 		this.orders = orders;
 		this.system = system;
-		this.callsLeft = 0;
+		this.callsForTheDay = 0;
 		this.deliveredOrders = 0;
 	}
 
@@ -48,7 +48,7 @@ public class Manager extends Thread {
 	}
 
 	public void checkDeliveries() {
-		int deliveriesLeft = callsLeft - deliveredOrders;
+		int deliveriesLeft = callsForTheDay - deliveredOrders;
 		if (deliveriesLeft <= 10) {
 			PizzaGuy.onlyOneDeliveryPermited = true;
 		}
@@ -61,17 +61,17 @@ public class Manager extends Thread {
 	}
 
 	public void checkIfDayIsOver() {
-		if (deliveredOrders == callsLeft) {
+		if (deliveredOrders == callsForTheDay) {
 			stopWorkingDay();
 		}
 	}
 
 	public void addCallToManagerList() {
-		this.callsLeft++;
+		this.callsForTheDay++;
 	}
 
 	public void removeCallFromList() {
-		this.callsLeft--;
+		this.callsForTheDay--;
 	}
 
 	private double convertAddress(Order o) {

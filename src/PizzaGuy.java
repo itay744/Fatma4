@@ -64,7 +64,7 @@ public class PizzaGuy extends Thread {
 			addDeliveryToSalary(1, currentDriving, addTip());
 			Pizzeria.manager.addToDeliveredOrder();
 			Pizzeria.manager.checkIfDayIsOver();
-			
+			delivery[i] = null;
 		}
 	}
 	

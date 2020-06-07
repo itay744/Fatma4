@@ -15,7 +15,7 @@ public class Pizzeria {
 	public static Queue<Order> orders;
 	public static BoundedQueue<PizzaDelivery> deliverys;
 	public static boolean dayIsOver = false;
-	public static boolean callsIsEmpty = false;
+	public  boolean callsIsEmpty = false;
 	public static boolean ordersIsEmpty = false;
 	private static double dailyExpenses;
 	private static double dailyIncome;
@@ -49,7 +49,7 @@ public class Pizzeria {
 	private Vector<Clerk> buildClercks() {
 		Vector<Clerk> v = new Vector<Clerk>();
 		Clerk clerk1 = new Clerk("yuli", callsLine, orders, managerLine);
-		Clerk clerk2 = new Clerk("itai", callsLine, orders, managerLine);
+		Clerk clerk2 = new Clerk("itay", callsLine, orders, managerLine);
 		Clerk clerk3 = new Clerk("gili", callsLine, orders, managerLine);
 		v.add(clerk1);
 		v.add(clerk2);
@@ -59,8 +59,8 @@ public class Pizzeria {
 
 	private Vector<Scheduler> buildSchedulers() {
 		Vector<Scheduler> v = new Vector<Scheduler>();
-		Scheduler scheduler1 = new Scheduler("Roi", orders, system);
-		Scheduler scheduler2 = new Scheduler("Sofia", orders, system);
+		Scheduler scheduler1 = new Scheduler("Alon", orders, system);
+		Scheduler scheduler2 = new Scheduler("Hassid", orders, system);
 		v.add(scheduler1);
 		v.add(scheduler2);
 		return v;
@@ -68,9 +68,9 @@ public class Pizzeria {
 
 	private Vector<PizzaGuy> buildPizzaGuy() {
 		Vector<PizzaGuy> v = new Vector<PizzaGuy>();
-		PizzaGuy pizzaGuy1 = new PizzaGuy("Guy", deliverys);
-		PizzaGuy pizzaGuy2 = new PizzaGuy("Jon", deliverys);
-		PizzaGuy pizzaGuy3 = new PizzaGuy("Juli", deliverys);
+		PizzaGuy pizzaGuy1 = new PizzaGuy("Sapir", deliverys);
+		PizzaGuy pizzaGuy2 = new PizzaGuy("Ido", deliverys);
+		PizzaGuy pizzaGuy3 = new PizzaGuy("Shay", deliverys);
 		v.add(pizzaGuy1);
 		v.add(pizzaGuy2);
 		v.add(pizzaGuy3);
@@ -130,7 +130,7 @@ public class Pizzeria {
 		}
 	}
 
-	public static void startClerksDay(Vector<Clerk> v) {
+	public  void startClerksDay(Vector<Clerk> v) {
 		while (!callsIsEmpty) {
 			for (Clerk c : v) {
 				Thread t = new Thread(c);
@@ -140,7 +140,7 @@ public class Pizzeria {
 		}
 	}
 
-	private static void checkCallsLine() {
+	private  void checkCallsLine() {
 		if (callsLine.isEmpty()) {
 			callsIsEmpty = true;
 		}

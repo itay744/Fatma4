@@ -11,7 +11,7 @@ public class KitchenWorker extends Thread{
 		this.deliveries = deliveries;
 	}
 	
-	public void run() {
+	public synchronized void run() {
 		Order o = system.extractOrder();
 		addOrderToSalary(o);
 		int workingTime = calculateWorkingTime(o);

@@ -19,7 +19,6 @@ public class Clerk implements Runnable {
 	public synchronized void run() {
 		Call c = callLine.extract();
 		addCallToClerkSalary();
-		Thread t = new Thread(c);
 		try {
 			Thread.sleep((long) (c.getCallDuration() * 1000));
 		} catch (InterruptedException e) {
