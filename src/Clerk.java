@@ -1,37 +1,40 @@
 import javax.sql.rowset.Joinable;
 
-public class Clerk implements Runnable {
+public class Clerk extends Employee implements Runnable {
 	private String name;
 	private double salary;
-	private static int pizzaBasePrice=25;
+	private static int pizzaBasePrice = 25;
 	Queue<Call> callLine;
 	Queue<Order> orders;
 	Queue<Call> managerLine;
 
-	public Clerk(String name, Queue<Call> callLine,Queue<Order> orders,Queue<Call> managerLine) {
+	public Clerk(String name, Queue<Call> callLine, Queue<Order> orders, Queue<Call> managerLine) {
 		this.name = name;
 		this.callLine = callLine;
 		this.orders = orders;
 		this.managerLine = managerLine;
-		this.salary=0;
+		this.salary = 0;
 	}
 
-	public synchronized  void run() {
-		Call c = callLine.extract();
-		addCallToClerkSalary();
+	public synchronized void run() {
+		while (!isDayFinished()) {
+			Call c = callLine.extract();
+			addCallToClerkSalary();
+			System.out.println(c);
 //		try {
 //			Thread.sleep((long) (c.getCallDuration())*1000);
 //		} catch (InterruptedException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		if (c.getNumOfPizzas() < 10) {
-			Order o = createOrder(c);
-			//Pizzeria.addOrderToIncome(o.getPrice());
-			System.out.println(o);
-		//	orders.insert(o);
-		} 
-		else  {
+			if (c.getNumOfPizzas() < 10) {
+				Order o = createOrder(c);
+				// Pizzeria.addOrderToIncome(o.getPrice());
+				System.out.println(o);
+				orders.insert(o);
+			}
+
+			else {
 //			try {
 //				Thread.sleep(500);// need to transfer to manager call line
 //				
@@ -39,24 +42,31 @@ public class Clerk implements Runnable {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-			managerLine.insert(c);	
+				// managerLine.insert(c);
+			}
 		}
+		this.notifyAll();
 	}
-	
+
 	private void addCallToClerkSalary() {
-		this.salary+=2;
+		this.salary += 2;
 		Pizzeria.addSalaryToExpenses(2);
 	}
-	
+
 	private Order createOrder(Call c) {
 		int numOfPizzas = c.getNumOfPizzas();
 		double totalPrice = pizzaBasePrice * numOfPizzas;
 		String address = c.getAddress();
 		long creditCard = c.getCreditCardNum();
 		int arrivalTime = c.getArrivalTime();
-		Order o = new Order(numOfPizzas,address,creditCard,arrivalTime,totalPrice);
+		Order o = new Order(numOfPizzas, address, creditCard, arrivalTime, totalPrice);
 
 		return o;
+	}
+
+	private boolean isDayFinished() {
+		return callLine.isEmpty();
+
 	}
 
 }

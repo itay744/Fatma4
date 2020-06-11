@@ -1,32 +1,33 @@
 
-public class Scheduler extends Thread {
+public class Scheduler extends Employee implements Runnable {
 	private String name;
 	private double salary;
 	Queue<Order> orders;
-	InformationSystem system;
+	InformationSystem pizzaSystem;
 
-	public Scheduler(String name, Queue<Order> orders, InformationSystem system) {
+	public Scheduler(String name, Queue<Order> orders, InformationSystem pizzaSystem) {
 		super();
 		this.name = name;
 		this.salary = 0;
 		this.orders = orders;
-		this.system = system;
+		this.pizzaSystem = pizzaSystem;
 	}
 
-	public void run() {
+	public synchronized void run() {
 		Order o = orders.extract();
 		double distance = convertAddress(o);
 		o.setDistance(distance);
 		double workingTime = calculateWorkingTime(distance);
 		addOrderToSalary(workingTime);
 		try {
-			sleep((long) workingTime * 1000);
+			Thread.sleep((long) workingTime * 1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		system.insertOrder(o);
-		System.out.println("New Order Arrived " + o.getSerialNum());
+		pizzaSystem.insertOrder(o);
+	//	System.out.println(o);
+//		System.out.println("New Order Arrived " + o.getSerialNum());
 
 	}
 
@@ -77,11 +78,6 @@ public class Scheduler extends Thread {
 		return words.length;
 	}
 	
-	public static void main(String[] args) {
-		Order o = new Order(2, "zAS", 122312, 1, 11);
-		
-		//System.out.println(convertAddress(o));
-		
-	}
+	
 
 }

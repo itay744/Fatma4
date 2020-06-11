@@ -23,12 +23,12 @@ public class Call implements Runnable {
 	}
 	
 	public synchronized void run() {
-//		try {
-//			Thread.sleep(arrivalTime*1000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			Thread.sleep(arrivalTime*1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		callLine.insert(this);
 		waitUntilDayOver();
 		
@@ -63,7 +63,7 @@ public class Call implements Runnable {
 	@Override
 	public String toString() {
 		return "Call [numOfPizzas=" + numOfPizzas + ", address=" + address + ", creditCardNum=" + creditCardNum
-				+ ", arrivalTime=" + arrivalTime + ", callDuration=" + callDuration + ", callLine=" + callLine + "]";
+				+ ", arrivalTime=" + arrivalTime + ", callDuration=" + callDuration +  "]";
 	}
 	
 

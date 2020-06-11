@@ -1,19 +1,25 @@
+import java.util.Vector;
 
 public class Manager extends Thread {
 	private Queue<Call> managerLine;
 	private Queue<Order> orders;
 	private Queue<Call> calls;
+	private Vector<Employee> employees;
+	private BoundedQueue<PizzaDelivery> deliveries;
 	private InformationSystem system;
 	private int callsForTheDay;
 	private int deliveredOrders;
 
-	public Manager(Queue<Call> managerLine, Queue<Order> orders, InformationSystem system,Queue<Call> Calls) {
+	public Manager(Queue<Call> managerLine, Queue<Order> orders, InformationSystem system,Queue<Call> Calls,BoundedQueue<PizzaDelivery> deliveries, Vector<Employee> employees ) {
 		this.managerLine = managerLine;
 		this.orders = orders;
 		this.system = system;
 		this.calls = Calls;
+		this.deliveries = deliveries;
 		this.callsForTheDay = 0;
 		this.deliveredOrders = 0;
+		this.employees = employees;
+		
 	}
 
 	private Order createOrder(Call c) {
@@ -56,6 +62,8 @@ public class Manager extends Thread {
 			PizzaGuy.onlyOneDeliveryPermited = true;
 		}
 	}
+	
+	
 
 	private void printWorkingDayData() {
 		System.out.println(" Orders Delivered " + deliveredOrders);
@@ -77,9 +85,6 @@ public class Manager extends Thread {
 		this.callsForTheDay++;
 	}
 
-	public void removeCallFromList() {
-		this.callsForTheDay--;
-	}
 
 	private double convertAddress(Order o) {
 		String address = o.getAddress();

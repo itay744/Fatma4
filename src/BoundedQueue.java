@@ -8,16 +8,21 @@ class BoundedQueue<T> {
 		buffer = new Vector<T>();
 		this.maxSize = 12;
 	}
+	
+	public BoundedQueue(int size) {
+		buffer = new Vector<T>();
+		this.maxSize = size;
+	}
 
 	public synchronized void insert(T item) {
-		while (buffer.size() >= maxSize)
+		while (buffer.size() >= maxSize) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+		}
 		buffer.add(item);
 		notifyAll();
 	}

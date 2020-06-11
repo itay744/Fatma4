@@ -5,16 +5,17 @@ import java.util.Vector;
 
 public class Pizzeria {
 	public static Vector<Clerk> clerks;
-	public static InformationSystem system;
+	public static InformationSystem pizzaSystem;
 	public static Vector<PizzaGuy> pizzaGuys;
 	public static Vector<PizzaDelivery> pizzaDeliverys;
 	public static Vector<Scheduler> schedulers;
 	public static Vector<KitchenWorker> kitchenWorkers;
+	public static Vector<Employee> employees;
 	public static Manager manager;
 	public static Queue<Call> callsLine;
 	public static Queue<Call> managerLine;
 	public static Queue<Order> orders;
-	public static BoundedQueue<PizzaDelivery> deliverys;
+	public static BoundedQueue<PizzaDelivery> deliveries;
 	public static boolean dayIsOver = false;
 	public boolean callsIsEmpty = false;
 	public static boolean ordersIsEmpty = false;
@@ -25,21 +26,28 @@ public class Pizzeria {
 		callsLine = new Queue<Call>();
 		managerLine = new Queue<Call>();
 		orders = new Queue<Order>();
-		system = new InformationSystem();
-		deliverys = new BoundedQueue<PizzaDelivery>();
-		manager = new Manager(managerLine, orders, system, callsLine);
-		clerks = buildClerks();
-		schedulers = buildSchedulers();
-		pizzaGuys = buildPizzaGuys();
+		pizzaSystem = new InformationSystem();
+		deliveries = new BoundedQueue<PizzaDelivery>();
+		employees = 
+		manager = new Manager(managerLine, orders, pizzaSystem, callsLine, deliveries, pizzaGuys);
 		kitchenWorkers = buildKitchenWorkers();
 		insertCallsToLine(readCalls(file));
 		startClerksDay(clerks);
-		startManagerDay(manager);
-		//startSchedulersDay(schedulers);
-	//	startKitchenWorkersDay(kitchenWorkers);
-		//startPizzaGuysDay(pizzaGuys);
+		// startManagerDay(manager);
+		startSchedulersDay(schedulers);
+		startKitchenWorkersDay(kitchenWorkers);
+		// startPizzaGuysDay(pizzaGuys);
 		dailyExpenses = 0;
 		dailyIncome = 0;
+	}
+	
+	private void buildEmployeesV() {
+		Vector<Clerk> v = new Vector<Clerk>();
+		Clerk clerk1 = new Clerk("yuli", callsLine, orders, managerLine);
+		Clerk clerk2 = new Clerk("itay", callsLine, orders, managerLine);
+		Clerk clerk3 = new Clerk("gili", callsLine, orders, managerLine);
+		employees.add(clerk1);
+
 	}
 
 	public static void addSalaryToExpenses(double salary) {
@@ -60,12 +68,12 @@ public class Pizzeria {
 		v.add(clerk3);
 		return v;
 	}
-	
+
 	private Vector<KitchenWorker> buildKitchenWorkers() {
 		Vector<KitchenWorker> v = new Vector<KitchenWorker>();
-		KitchenWorker KitchenWorker1 = new KitchenWorker("dani", system, deliverys);
-		KitchenWorker KitchenWorker2 = new KitchenWorker("evya",system, deliverys);
-		KitchenWorker KitchenWorker3 = new KitchenWorker("jordan",system, deliverys);
+		KitchenWorker KitchenWorker1 = new KitchenWorker("dani", pizzaSystem, deliveries);
+		KitchenWorker KitchenWorker2 = new KitchenWorker("evya", pizzaSystem, deliveries);
+		KitchenWorker KitchenWorker3 = new KitchenWorker("jordan", pizzaSystem, deliveries);
 		v.add(KitchenWorker1);
 		v.add(KitchenWorker2);
 		v.add(KitchenWorker3);
@@ -74,8 +82,8 @@ public class Pizzeria {
 
 	private Vector<Scheduler> buildSchedulers() {
 		Vector<Scheduler> v = new Vector<Scheduler>();
-		Scheduler scheduler1 = new Scheduler("Alon", orders, system);
-		Scheduler scheduler2 = new Scheduler("Hassid", orders, system);
+		Scheduler scheduler1 = new Scheduler("Alon", orders, pizzaSystem);
+		Scheduler scheduler2 = new Scheduler("Hassid", orders, pizzaSystem);
 		v.add(scheduler1);
 		v.add(scheduler2);
 		return v;
@@ -83,9 +91,9 @@ public class Pizzeria {
 
 	private Vector<PizzaGuy> buildPizzaGuys() {
 		Vector<PizzaGuy> v = new Vector<PizzaGuy>();
-		PizzaGuy pizzaGuy1 = new PizzaGuy("Sapir", deliverys);
-		PizzaGuy pizzaGuy2 = new PizzaGuy("Ido", deliverys);
-		PizzaGuy pizzaGuy3 = new PizzaGuy("Shay", deliverys);
+		PizzaGuy pizzaGuy1 = new PizzaGuy("Sapir", deliveries);
+		PizzaGuy pizzaGuy2 = new PizzaGuy("Ido", deliveries);
+		PizzaGuy pizzaGuy3 = new PizzaGuy("Shay", deliveries);
 		v.add(pizzaGuy1);
 		v.add(pizzaGuy2);
 		v.add(pizzaGuy3);
@@ -128,12 +136,17 @@ public class Pizzeria {
 	}
 
 	private void insertCallsToLine(Vector<Call> c) {
-		Vector<Thread> tc = new Vector<Thread>();
-		for (Call call : c) {
-			Thread t = new Thread(call);
-			tc.add(t);
+//		Vector<Thread> tc = new Vector<Thread>();
+//		for (Call call : c) {
+//			Thread t = new Thread(call);
+//			tc.add(t);
+//		}
+//		startThreads(tc);
+		for (int i = 0; i < 2; i++) {
+			Thread t = new Thread(c.get(i));
+			t.start();
 		}
-		startThreads(tc);
+
 	}
 
 	public static double getDailyIncome() {
@@ -146,20 +159,21 @@ public class Pizzeria {
 		}
 	}
 
-	public void printCalls(Queue<Call> call) {
-		for (int i = 0; i < 150; i++) {
-			System.out.println(call.extract().toString());
-		}
-	}
-
 	public void startClerksDay(Vector<Clerk> v) {
-		while (!callsIsEmpty) {
-			for (Clerk c : v) {
-				Thread t = new Thread(c);
-				t.start();
-				checkCallsLine();
-			}
+//		while (!callsIsEmpty) {
+//			for (Clerk c : v) {
+//				Thread t = new Thread(c);
+//				t.start();
+//				checkCallsLine();
+//			}
+		for (int i = 0; i < 2; i++) {
+			Thread t = new Thread(v.get(i));
+			t.start();
+			checkCallsLine();
 		}
+//		Thread t = new Thread(v.get(0));
+//		t.start();
+		// }
 	}
 
 	public void startManagerDay(Manager m) {
@@ -168,6 +182,7 @@ public class Pizzeria {
 			t.start();
 
 		}
+
 	}
 
 	private void checkCallsLine() {
@@ -177,30 +192,49 @@ public class Pizzeria {
 	}
 
 	public static void startPizzaGuysDay(Vector<PizzaGuy> v) {
-		while (!dayIsOver) {
-			for (PizzaGuy p : v) {
-				Thread t = new Thread(p);
-				t.start();
-			}
+//		while (!dayIsOver) {
+//			for (PizzaGuy p : v) {
+//				Thread t = new Thread(p);
+//				t.start();
+//			}
+//		}
+		for (int i = 0; i < 2; i++) {
+			Thread t = new Thread(v.get(i));
+			t.start();
+
 		}
 	}
 
 	public static void startSchedulersDay(Vector<Scheduler> v) {
-		while (!dayIsOver) {
-			for (Scheduler s : v) {
-				Thread t = new Thread(s);
-				t.start();
-			}
+//		while (!dayIsOver) {
+//			for (Scheduler s : v) {
+//				Thread t = new Thread(s);
+//				t.start();
+//			}
+		for (int i = 0; i < 2; i++) {
+			Thread t = new Thread(v.get(i));
+			t.start();
+
 		}
+//		}
+//		Thread t = new Thread(v.get(0));
+//		t.start();
 	}
 
 	public static void startKitchenWorkersDay(Vector<KitchenWorker> v) {
-		while (!dayIsOver) {
-			for (KitchenWorker k : v) {
-				Thread t = new Thread(k);
-				t.start();
-			}
+//		while (!dayIsOver) {
+//			for (KitchenWorker k : v) {
+//				Thread t = new Thread(k);
+//				t.start();
+//			}
+		for (int i = 0; i < 2; i++) {
+			Thread t = new Thread(v.get(i));
+			t.start();
+
 		}
+//		}
+//		Thread t = new Thread(v.get(0));
+//		t.start();
 	}
 
 	public static void main(String[] args) {
