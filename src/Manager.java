@@ -2,14 +2,16 @@
 public class Manager extends Thread {
 	private Queue<Call> managerLine;
 	private Queue<Order> orders;
+	private Queue<Call> calls;
 	private InformationSystem system;
 	private int callsForTheDay;
 	private int deliveredOrders;
 
-	public Manager(Queue<Call> managerLine, Queue<Order> orders, InformationSystem system) {
+	public Manager(Queue<Call> managerLine, Queue<Order> orders, InformationSystem system,Queue<Call> Calls) {
 		this.managerLine = managerLine;
 		this.orders = orders;
 		this.system = system;
+		this.calls = Calls;
 		this.callsForTheDay = 0;
 		this.deliveredOrders = 0;
 	}
@@ -28,19 +30,20 @@ public class Manager extends Thread {
 		return o;
 	}
 
-	public void run() {
+	public  void run() {
 		Call c = managerLine.extract();
 		Order o = createOrder(c);
 		Pizzeria.addOrderToIncome(o.getPrice());
 		double distance = convertAddress(o);
 		o.setDistance(distance);
-		system.insertOrder(o);
-		try {
-			sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println(o);
+		//system.insertOrder(o);
+//		try {
+//			sleep(2000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	public void addToDeliveredOrder() {
@@ -61,9 +64,13 @@ public class Manager extends Thread {
 	}
 
 	public void checkIfDayIsOver() {
-		if (deliveredOrders == callsForTheDay) {
+		if (deliveredOrders == calls.Size()) {
 			stopWorkingDay();
 		}
+	}
+	
+	private int checkCallsForDay() {
+		return calls.Size();
 	}
 
 	public void addCallToManagerList() {

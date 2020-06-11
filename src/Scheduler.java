@@ -39,31 +39,31 @@ public class Scheduler extends Thread {
 		Pizzeria.addSalaryToExpenses(workingTime * 4);
 	}
 
-	private double convertAddress(Order o) {
+	private  double convertAddress(Order o) {
 		String address = o.getAddress();
 		double distance = calculateDistance(address);
 		return distance;
 
 	}
 
-	private double calculateDistance(String s) {
-		int distance = countWordsUsingSplit(s);
+	private  double calculateDistance(String s) {
+		double distance = countWordsUsingSplit(s);
 		char c = s.charAt(0);
 		distance += addDistanceByFirstLetter(c);
 		return distance;
 	}
 
-	private double addDistanceByFirstLetter(char c) {
-		if (c >= 'a' || c <= 'h') {
+	private  double addDistanceByFirstLetter(char c) {
+		if (c >= 'a' && c <= 'h') {
 			return 0.5;
 		}
-		if (c >= 'i' || c <= 'p') {
+		if (c >= 'i' && c <= 'p') {
 			return 2;
 		}
-		if (c >= 'q' || c <= 'z') {
+		if (c >= 'q' && c <= 'z') {
 			return 7;
 		}
-		if (c >= '0' || c <= '9') {
+		if (c >= '0' && c <= '9') {
 			return c - '0';
 		}
 		return 0;
@@ -75,6 +75,13 @@ public class Scheduler extends Thread {
 		}
 		String[] words = input.split("\\s+");
 		return words.length;
+	}
+	
+	public static void main(String[] args) {
+		Order o = new Order(2, "zAS", 122312, 1, 11);
+		
+		//System.out.println(convertAddress(o));
+		
 	}
 
 }

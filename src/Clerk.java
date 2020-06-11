@@ -16,28 +16,29 @@ public class Clerk implements Runnable {
 		this.salary=0;
 	}
 
-	public synchronized void run() {
+	public synchronized  void run() {
 		Call c = callLine.extract();
 		addCallToClerkSalary();
-		try {
-			Thread.sleep((long) (c.getCallDuration() * 1000));
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep((long) (c.getCallDuration())*1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		if (c.getNumOfPizzas() < 10) {
 			Order o = createOrder(c);
-			Pizzeria.addOrderToIncome(o.getPrice());
-			orders.insert(o);
+			//Pizzeria.addOrderToIncome(o.getPrice());
+			System.out.println(o);
+		//	orders.insert(o);
 		} 
 		else  {
-			try {
-				Thread.sleep(500);// need to transfer to manager call line
-				
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(500);// need to transfer to manager call line
+//				
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			managerLine.insert(c);	
 		}
 	}

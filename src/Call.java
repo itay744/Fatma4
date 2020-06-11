@@ -22,15 +22,16 @@ public class Call implements Runnable {
 		
 	}
 	
-	public void run() {
-		try {
-			Thread.sleep(arrivalTime*1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public synchronized void run() {
+//		try {
+//			Thread.sleep(arrivalTime*1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		callLine.insert(this);
-
+		waitUntilDayOver();
+		
 	}
 
 	public int getNumOfPizzas() {
@@ -53,9 +54,18 @@ public class Call implements Runnable {
 		return arrivalTime;
 	}
 	
-	public String toString()
-    {//todo check if needed
-        return this.creditCardNum + " " + this.numOfPizzas + " " + this.arrivalTime + " " + this.callDuration + " "+ this.address;
-    }
+	private void waitUntilDayOver() {
+		if(callLine == null) {
+			callLine.notifyAll();
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Call [numOfPizzas=" + numOfPizzas + ", address=" + address + ", creditCardNum=" + creditCardNum
+				+ ", arrivalTime=" + arrivalTime + ", callDuration=" + callDuration + ", callLine=" + callLine + "]";
+	}
+	
+
 
 }

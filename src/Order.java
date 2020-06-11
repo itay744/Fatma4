@@ -29,6 +29,13 @@ public class Order  {
 		return countedSerial;
 	}
 	
+	@Override
+	public String toString() {
+		return "Order [numOfPizzas=" + numOfPizzas + ", address=" + address + ", creditCardNum=" + creditCardNum
+				+ ", price=" + price + ", arrivalTime=" + arrivalTime + ", distance=" + distance + ", serialNum="
+				+ serialNum + "]";
+	}
+
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}

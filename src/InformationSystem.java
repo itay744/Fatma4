@@ -28,7 +28,7 @@ public class InformationSystem extends Thread {
 			
 		}
 		System.out.println("New Order Arriverd:");
-		System.out.println("Serial numner: "+ o.getSerialNum());
+		System.out.println("Serial number: "+ o.getSerialNum());
 		this.notifyAll();
 	}
 
