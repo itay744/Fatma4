@@ -7,9 +7,6 @@ public class Pizzeria {
 	public static Vector<Clerk> clerks;
 	public static InformationSystem pizzaSystem;
 	public static Vector<PizzaGuy> pizzaGuys;
-	public static Vector<PizzaDelivery> pizzaDeliverys;
-	public static Vector<Scheduler> schedulers;
-	public static Vector<KitchenWorker> kitchenWorkers;
 	public static Vector<Employee> employees;
 	public static Manager manager;
 	public static Queue<Call> callsLine;
@@ -22,33 +19,57 @@ public class Pizzeria {
 	private static double dailyExpenses;
 	private static double dailyIncome;
 
-	public Pizzeria(String file) {
+	public Pizzeria(String file,double WorkingTime, int numOfPizzaGuy) {
 		callsLine = new Queue<Call>();
 		managerLine = new Queue<Call>();
 		orders = new Queue<Order>();
 		pizzaSystem = new InformationSystem();
 		deliveries = new BoundedQueue<PizzaDelivery>();
-		employees = 
-		manager = new Manager(managerLine, orders, pizzaSystem, callsLine, deliveries, pizzaGuys);
-		kitchenWorkers = buildKitchenWorkers();
+		employees = buildEmployeesV(numOfPizzaGuy);
+		manager = new Manager(managerLine, orders, pizzaSystem, callsLine, deliveries,employees);
 		insertCallsToLine(readCalls(file));
-		startClerksDay(clerks);
-		// startManagerDay(manager);
-		startSchedulersDay(schedulers);
-		startKitchenWorkersDay(kitchenWorkers);
-		// startPizzaGuysDay(pizzaGuys);
+        Vector <Thread> threads = createThreads(employees);
+        startThraed(threads);
+        startManagerDay(manager);
 		dailyExpenses = 0;
 		dailyIncome = 0;
 	}
 	
-	private void buildEmployeesV() {
-		Vector<Clerk> v = new Vector<Clerk>();
-		Clerk clerk1 = new Clerk("yuli", callsLine, orders, managerLine);
-		Clerk clerk2 = new Clerk("itay", callsLine, orders, managerLine);
-		Clerk clerk3 = new Clerk("gili", callsLine, orders, managerLine);
-		employees.add(clerk1);
-
+	private Vector<Employee> buildEmployeesV(int numOfPizzaGuy) {
+		Vector<Employee> v = new Vector<Employee>();
+		Clerk clerk1 = new Clerk("yuli", callsLine, orders, managerLine); v.add(clerk1);
+		Clerk clerk2 = new Clerk("itay", callsLine, orders, managerLine); v.add(clerk2);
+		Clerk clerk3 = new Clerk("gili", callsLine, orders, managerLine); v.add(clerk3);
+		KitchenWorker KitchenWorker1 = new KitchenWorker("dani", pizzaSystem, deliveries); v.add(KitchenWorker1);
+		KitchenWorker KitchenWorker2 = new KitchenWorker("evya", pizzaSystem, deliveries); v.add(KitchenWorker2);
+		KitchenWorker KitchenWorker3 = new KitchenWorker("jordan", pizzaSystem, deliveries); v.add(KitchenWorker3);
+		Scheduler scheduler1 = new Scheduler("Alon", orders, pizzaSystem); v.add(scheduler1);
+		Scheduler scheduler2 = new Scheduler("Hassid", orders, pizzaSystem); v.add(scheduler2);
+		for(int i = 0; i< numOfPizzaGuy; i++) {
+			PizzaGuy p = new PizzaGuy("Itai"+i,deliveries);
+			v.add(p);
+		}
+		
+		return v;
+		
 	}
+	
+	public Vector<Thread> createThreads(Vector<Employee>employees) {
+		Vector<Thread> tc = new Vector<Thread>();
+		for (Employee emp : employees) {
+			Thread t = new Thread(emp);
+			tc.add(t);
+		}
+		return tc;
+	}
+	
+	public void startThraed(Vector<Thread> tc) {
+		for (Thread t : tc) {
+			t.start();
+		}
+	}
+	
+	
 
 	public static void addSalaryToExpenses(double salary) {
 		dailyExpenses += salary;
@@ -58,47 +79,6 @@ public class Pizzeria {
 		dailyIncome += deliveryPrice;
 	}
 
-	private Vector<Clerk> buildClerks() {
-		Vector<Clerk> v = new Vector<Clerk>();
-		Clerk clerk1 = new Clerk("yuli", callsLine, orders, managerLine);
-		Clerk clerk2 = new Clerk("itay", callsLine, orders, managerLine);
-		Clerk clerk3 = new Clerk("gili", callsLine, orders, managerLine);
-		v.add(clerk1);
-		v.add(clerk2);
-		v.add(clerk3);
-		return v;
-	}
-
-	private Vector<KitchenWorker> buildKitchenWorkers() {
-		Vector<KitchenWorker> v = new Vector<KitchenWorker>();
-		KitchenWorker KitchenWorker1 = new KitchenWorker("dani", pizzaSystem, deliveries);
-		KitchenWorker KitchenWorker2 = new KitchenWorker("evya", pizzaSystem, deliveries);
-		KitchenWorker KitchenWorker3 = new KitchenWorker("jordan", pizzaSystem, deliveries);
-		v.add(KitchenWorker1);
-		v.add(KitchenWorker2);
-		v.add(KitchenWorker3);
-		return v;
-	}
-
-	private Vector<Scheduler> buildSchedulers() {
-		Vector<Scheduler> v = new Vector<Scheduler>();
-		Scheduler scheduler1 = new Scheduler("Alon", orders, pizzaSystem);
-		Scheduler scheduler2 = new Scheduler("Hassid", orders, pizzaSystem);
-		v.add(scheduler1);
-		v.add(scheduler2);
-		return v;
-	}
-
-	private Vector<PizzaGuy> buildPizzaGuys() {
-		Vector<PizzaGuy> v = new Vector<PizzaGuy>();
-		PizzaGuy pizzaGuy1 = new PizzaGuy("Sapir", deliveries);
-		PizzaGuy pizzaGuy2 = new PizzaGuy("Ido", deliveries);
-		PizzaGuy pizzaGuy3 = new PizzaGuy("Shay", deliveries);
-		v.add(pizzaGuy1);
-		v.add(pizzaGuy2);
-		v.add(pizzaGuy3);
-		return v;
-	}
 
 	public Vector<Call> readCalls(String file) { // reads from the Customers file.
 		BufferedReader br = null;
@@ -141,7 +121,7 @@ public class Pizzeria {
 //			Thread t = new Thread(call);
 //			tc.add(t);
 //		}
-//		startThreads(tc);
+
 		for (int i = 0; i < 2; i++) {
 			Thread t = new Thread(c.get(i));
 			t.start();
@@ -153,11 +133,7 @@ public class Pizzeria {
 		return dailyIncome;
 	}
 
-	public void startThreads(Vector<Thread> threads) {
-		for (Thread t : threads) {
-			t.start();
-		}
-	}
+	
 
 	public void startClerksDay(Vector<Clerk> v) {
 //		while (!callsIsEmpty) {
@@ -177,12 +153,8 @@ public class Pizzeria {
 	}
 
 	public void startManagerDay(Manager m) {
-		while (!dayIsOver) {
 			Thread t = new Thread(m);
 			t.start();
-
-		}
-
 	}
 
 	private void checkCallsLine() {
@@ -239,7 +211,7 @@ public class Pizzeria {
 
 	public static void main(String[] args) {
 		String CallsFile = new String("assignment4_callsData.txt");
-		Pizzeria pizzaPazza = new Pizzeria(CallsFile);
+		//Pizzeria pizzaPazza = new Pizzeria(CallsFile);
 //		System.out.println("yuli");
 //		System.out.println(Pizzeria.callsLine.extract().toString());
 
