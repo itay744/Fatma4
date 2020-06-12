@@ -1,19 +1,17 @@
-
-public class KitchenWorker extends Employee implements Runnable  {
-	private String name;
-	private double salary;
+public class KitchenWorker extends Employee  {
 	InformationSystem pizzaSystem;
 	BoundedQueue<PizzaDelivery> deliveries;
 
 	public KitchenWorker(String name,InformationSystem pizzaSystem,BoundedQueue<PizzaDelivery> deliveries) {
-		this.name = name;
+		super(name);
 		this.pizzaSystem = pizzaSystem;
 		this.deliveries = deliveries;
 	}
 	
 	public synchronized void run() {
 		Order o = pizzaSystem.extractOrder();
-		addOrderToSalary(o);
+		int numOfPizza = o.getNumOfPizzas();
+		calculateSalary(numOfPizza);
 		int workingTime = calculateWorkingTime(o);
 		try {
 			Thread.sleep(workingTime*1000);
@@ -30,9 +28,11 @@ public class KitchenWorker extends Employee implements Runnable  {
 		int timePerPizza = 0; // need to be changed by GUI
 		return timePerPizza*o.getNumOfPizzas();
 	}
-	
-	private void addOrderToSalary(Order o) {
-		this.salary+= o.getNumOfPizzas()*2;
-		Pizzeria.addSalaryToExpenses(o.getNumOfPizzas()*2);
+
+	@Override
+	public void calculateSalary(double numOfPizza) {
+		this.salary+= numOfPizza*2;
+		Pizzeria.addSalaryToExpenses(numOfPizza*2);
+		
 	}
 }
