@@ -1,9 +1,7 @@
 import java.util.Random;
 import java.util.Vector;
 
-public class PizzaGuy extends Employee implements Runnable{
-	private String name;
-	private double salary;
+public class PizzaGuy extends Employee{
 	private int deliveryCapacity;
 	private int totalDeliveries;
 	public static boolean onlyOneDeliveryPermited = false;
@@ -11,8 +9,8 @@ public class PizzaGuy extends Employee implements Runnable{
 	PizzaDelivery[] delivery;
 
 	public PizzaGuy(String name, BoundedQueue<PizzaDelivery> deliveries) {
+		super(name);
 		Random r = new Random();
-		this.name = name;
 		deliveryCapacity = r.nextInt(3) + 2;
 		this.salary = 0;
 		this.deliveries = deliveries;
@@ -30,9 +28,11 @@ public class PizzaGuy extends Employee implements Runnable{
 		this.deliveryCapacity = deliveryCapacity;
 	}
 
-	private void addDeliveryToSalary(int numOfDeliveries, double distance, int tips) {
-		salary += 3 * numOfDeliveries + 4 * distance + tips;
-		Pizzeria.addSalaryToExpenses(3 * numOfDeliveries + 4 * distance);
+	private double calculateCurrentDelivery(double distance, int tips) {
+		double amount = 0;
+		amount += 3  + 4 * distance + tips;
+		Pizzeria.addSalaryToExpenses(3  + 4 * distance);
+		return amount;
 	}
 
 	public int getTotalDeliveries() {
@@ -70,12 +70,21 @@ public class PizzaGuy extends Employee implements Runnable{
 				e.printStackTrace();
 			}
 			System.out.println("current driving " +currentDriving);
-			addDeliveryToSalary(1, currentDriving, addTip());
+			double amount = calculateCurrentDelivery(currentDriving, addTip());
+			calculateSalary(amount);
 			Pizzeria.manager.addToDeliveredOrder();
+			
 			Pizzeria.manager.checkIfDayIsOver();
 			delivery[i] = null;
 			
 		}
+	}
+
+
+	@Override
+	public void calculateSalary(double input) {
+		salary += input;
+		
 	}
 
 }
