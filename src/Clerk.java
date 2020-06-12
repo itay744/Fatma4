@@ -1,25 +1,23 @@
 import javax.sql.rowset.Joinable;
 
-public class Clerk extends Employee implements Runnable {
-	private String name;
-	private double salary;
+public class Clerk extends Employee {
 	private static int pizzaBasePrice = 25;
 	Queue<Call> callLine;
 	Queue<Order> orders;
 	Queue<Call> managerLine;
 
-	public Clerk(String name, Queue<Call> callLine, Queue<Order> orders, Queue<Call> managerLine) {
-		this.name = name;
+	public Clerk(String name,Queue<Call> callLine, Queue<Order> orders, Queue<Call> managerLine) {
+        super(name);
 		this.callLine = callLine;
 		this.orders = orders;
 		this.managerLine = managerLine;
-		this.salary = 0;
+
 	}
 
 	public synchronized void run() {
 		while (!isDayFinished()) {
 			Call c = callLine.extract();
-			addCallToClerkSalary();
+			calculateSalary(0);
 			System.out.println(c);
 //		try {
 //			Thread.sleep((long) (c.getCallDuration())*1000);
@@ -48,10 +46,6 @@ public class Clerk extends Employee implements Runnable {
 		this.notifyAll();
 	}
 
-	private void addCallToClerkSalary() {
-		this.salary += 2;
-		Pizzeria.addSalaryToExpenses(2);
-	}
 
 	private Order createOrder(Call c) {
 		int numOfPizzas = c.getNumOfPizzas();
@@ -69,4 +63,12 @@ public class Clerk extends Employee implements Runnable {
 
 	}
 
+	@Override
+	public void calculateSalary(double time) {
+		this.salary += 2;
+		Pizzeria.addSalaryToExpenses(2);
+		
+	}
+
 }
+
